@@ -2,7 +2,6 @@
 public class main {
 
 	public static void main(String[] args) {
-		
 		MySinglyLinkedList newList = new MySinglyLinkedList();
 		newList.Append(3);
 		newList.Prepend(6);
