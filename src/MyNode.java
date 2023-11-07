@@ -1,16 +1,16 @@
 
-public class MyNode {
-	public int Data;
-	public MyNode NextNode;
+public class MyNode<T> {
+	public T Data;
+	public MyNode<T> NextNode;
 	
 	public MyNode()
 	{
-		this.Data = -1;
+		this.Data = null;
 		this.NextNode = null;
 	}
 	
 	public boolean IsNull()
 	{
-		return this.Data < 0;
+		return this.Data == null;
 	}
 }

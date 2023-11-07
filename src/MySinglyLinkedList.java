@@ -1,108 +1,145 @@
-public class MySinglyLinkedList implements MyList {
+public class MySinglyLinkedList<T> implements MyList<T> {
 
 	int Size;
-	MyNode Header;
+	MyNode<T> Header;
 	
 	public MySinglyLinkedList() {
 		this.Size = 0;
 		this.Header = null;
 		return;
 	}
-
-	public void Append(int data) {
-		MyNode appendNode = new MyNode();
+	//adds to end of linked list
+	public void Append(T data) {
+		MyNode<T> appendNode = new MyNode<T>();
 		appendNode.Data = data;
+		
+		//if first element in linked list
 		if(this.Header == null)
 		{
 			this.Header = appendNode;
 			this.Size++;
 			return;
 		}
-		MyNode tempNode = this.Header;
+		MyNode<T> tempNode = this.Header;
+		
+		//sets tempNode equal to last node
 		while(tempNode.NextNode != null)
 		{
 			tempNode = tempNode.NextNode;
 		}
+		//attaches additional node to last node
 		tempNode.NextNode = appendNode;
 		this.Size++;
 		return;
 	}
-
-	public void Prepend(int data) {
-		MyNode newNode = new MyNode();
+	//adds element to beginning of linked list
+	public void Prepend(T data) 
+	{
+		//creates Node
+		MyNode<T> newNode = new MyNode<T>();
 		newNode.Data = data;
 		newNode.NextNode = this.Header;
+		
+		//adds node to the beginning of list
 		this.Header = newNode;
 		this.Size++;
 		return;
 	}
 
-	public boolean InsertAfter(int searchValue, int data) {
-		MyNode searchValueNode = this.Search(searchValue);
+	public boolean InsertAfter(T searchValue, T data) 
+	{
+		//finds the matching node
+		MyNode<T> searchValueNode = this.Search(searchValue);
+		
+		//if a match is found
 		if(searchValueNode != null)
 		{
-			MyNode newNode = new MyNode();
+			//create new node
+			MyNode<T> newNode = new MyNode<T>();
 			newNode.Data = data;
+			
+			//adds node into place
 			newNode.NextNode = searchValueNode.NextNode;
 			searchValueNode.NextNode = newNode;
 			this.Size++;
 			return true;
 		}
+		// if no matching node found
 		else
 		{
 			return false;
 		}		
 	}
 	//removes first instance of number in list
-	public boolean Remove(int searchValue) {
-		MyNode beforeRemoveNode = this.Header;
-		if(this.Header.Data == searchValue)
+	public boolean Remove(T searchValue) 
+	{
+		// tracks the current removal node and the node before
+		MyNode<T> beforeRemoveNode = this.Header;
+		MyNode<T> removeNode = this.Header.NextNode;
+		
+		//if match is found on first element
+		if(beforeRemoveNode.Data.equals(searchValue))
 		{
+			//removes node
 			this.Header = this.Header.NextNode;
 			beforeRemoveNode.NextNode = null;			
 			this.Size--;
 			return true;
 		}
-		int counter  = 0;
-		while(counter < this.Size)
+		//iterates through all elements of list
+		for(int i =0; i< this.Size; i++)
 		{
-			if(beforeRemoveNode.NextNode.Data == searchValue)
+			//if a match if found
+			if(removeNode.Data.equals(searchValue))
 			{
-				MyNode deleteNode = beforeRemoveNode.NextNode;
-				beforeRemoveNode.NextNode = deleteNode.NextNode;
-				deleteNode.NextNode = null;
+				//changes the nextNode of the previous node to skip over node being removed
+				//removes the node by setting next node to null
+				beforeRemoveNode.NextNode = removeNode.NextNode;
+				removeNode.NextNode = null;
 				this.Size--;
+				
 				return true;
 			}
-			counter++;
+			//moves current and previous node forward one position
+			beforeRemoveNode = removeNode;
+			removeNode = beforeRemoveNode.NextNode;
 		}
+		// if no matches found
 		return false;
 	}
 
-	public MyNode Search(int searchValue) {
+	public MyNode<T> Search(T searchValue) 
+	{
+		//checks if list is empty
 		if(this.Header == null)
 		{
 			return null;
 		}
-		MyNode tempNode = this.Header;
+		//creates tempNode
+		MyNode<T> tempNode = this.Header;
+		//iterates through all elements of list
 		while(tempNode.NextNode != null)
 		{
-			if(tempNode.Data == searchValue)
+			//if a match is found
+			if(tempNode.Data.equals(searchValue))
 			{
+				//returns the pointer of the node
 				return tempNode;
 			}
+			//tempNode moves to next position
 			tempNode = tempNode.NextNode;
 		}
-		if(tempNode.Data == searchValue)
+		//checks final element of list
+		if(tempNode.Data.equals(searchValue))
 		{
 			return tempNode;
 		}
 		return null;
 	}
-
-	public void Print() {
-		MyNode tempNode = this.Header;
-		
+	//prints all elements of list
+	public void Print() 
+	{
+		MyNode<T> tempNode = this.Header;
 		while(tempNode.NextNode != null)
 		{
 			System.out.print(tempNode.Data + " ");
@@ -111,9 +148,11 @@ public class MySinglyLinkedList implements MyList {
 		System.out.println(tempNode.Data);
 		return;
 	}
-
-	public void PrintReverse() {
-		MyNode tempNode = this.Header;
+	
+	//prints all elements of list in reverse order
+	public void PrintReverse() 
+	{
+		MyNode<T> tempNode = this.Header;
 		String reverseString = "";
 		while(tempNode.NextNode != null)
 		{
@@ -124,33 +163,47 @@ public class MySinglyLinkedList implements MyList {
 		System.out.println(reverseString);
 		return;
 	}
-
-	public MySinglyLinkedList Sort() {
+	//sorts all elements of list in ascending order
+	public MySinglyLinkedList<T> Sort() 
+	{
+		//checks if list has 0 or 1 elements
 		if(this.Size < 2)
 		{
 			return this;
 		}
-		MySinglyLinkedList newList = new MySinglyLinkedList();
+		//creates temporary list
+		MySinglyLinkedList<T> newList = new MySinglyLinkedList<T>();
 		int totalSize = this.Size;
+		//iterates # of times equal to # of elements in list
 		for(int i = 0; i<totalSize; i++)
 		{
-			int max = -1;
-			MyNode tempNode = this.Header;
+			//sets the max value found equal to the value of the first element
+			T max = this.Header.Data;
+			MyNode<T> tempNode = this.Header;
+			
+			//searches through all remaining elements
 			for(int j = i; j<totalSize; j++)
 			{
-				if(tempNode.Data > max)
+				//searches for values larger than current max
+				if(tempNode.Data.toString().compareTo(max.toString())< 0)
 				{
-					max = tempNode.Data;
+					max = (tempNode.Data);
 				}
+				//moves to next element
 				tempNode = tempNode.NextNode;
 			}
-			newList.Prepend(max);
+			//adds largest element to temporary list
+			newList.Append(max);
+			//removes the largest element from source list
 			this.Remove(max);
 		}
+		//returns temporary list
 		return newList;
 	}
-
-	public boolean IsEmpty() {
+	//returns true if no elements in list
+	//returns false if 1 or more elements in list
+	public boolean IsEmpty() 
+	{
 		if(this.Header == null)
 		{
 			return true;
@@ -160,8 +213,9 @@ public class MySinglyLinkedList implements MyList {
 			return false;
 		}		
 	}
-
-	public int GetLength() {
+	//returns the number of elements in list
+	public int GetLength() 
+	{
 		return this.Size;
 	}
 
